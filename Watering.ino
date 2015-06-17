@@ -80,24 +80,31 @@ void parseCommand(String com)
 	lastSpace = nextSpace;
 	part3 = com.substring(lastSpace+1);
 	
-		Serial.print("Command received: \t"); 									//TESTING
+		Serial.print("Part1: \t"); 									//TESTING
 		Serial.print(part1);															//TESTING
-		Serial.print("\tMinutes: \t");											//TESTING
+		Serial.print("\tPart2: \t");											//TESTING
 		Serial.println(part2);														//TESTING
 		Serial.print("\tPart3: \t");												//TESTING
 		Serial.println(part3);														//TESTING
+		//convert to char array to ELABORATE!
+		char part[10];
+		part1.toCharArray(part,10);
 
-	if (part1.equalsIgnoreCase("START"))		//START command
+	//if (part1.equalsIgnoreCase("START"))			//START command
+	if (strstr(part,"START"))	 //NEW COMPARISON METHOD
 	{
 		int mins_run = part2.toInt();
-		DoWatering(mins_run);
+		digitalWrite(pump1Pin, HIGH);
+		digitalWrite(pump1LedPin, HIGH);
+		//pumpIsActive = 1;
+		//DoWatering(mins_run);
 	}
 	else if (part1.equalsIgnoreCase("STOP"))		//STOP command
 	{
 		digitalWrite(pump1Pin, LOW);
 		digitalWrite(pump1LedPin, LOW);
 		Serial.println("STOP RECEIVED");											//TESTING
-		int mins_to_stop = part2.toInt();
+		//int mins_to_stop = part2.toInt();
 	}
 	
 	
