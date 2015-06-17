@@ -23,6 +23,8 @@ const byte pump1LedPin = 13;
 String inBuffer;
 int mins;
 String command;
+bool pumpIsActive, pumpOvrStop = 0;
+int num2, num3;
 
 //#ifdef DEBUG_MODE
 #define DB_RX_PIN 8
@@ -50,6 +52,19 @@ Serialdb.println("Debug Mode ON");
 
 void loop()
 {
+	
+	if (pumpIsActive & !pumpOvrStop){
+		digitalWrite(pump1Pin, HIGH);
+		digitalWrite(pump1LedPin, HIGH);
+	}
+	else {
+		digitalWrite(pump1Pin, LOW);
+		digitalWrite(pump1LedPin, LOW);
+	}
+	
+	
+	
+
 	
 	if (Serial.available())
 	{
@@ -79,38 +94,45 @@ void parseCommand(String com)
 	nextSpace = com.indexOf(' ',lastSpace+1);
 	lastSpace = nextSpace;
 	part3 = com.substring(lastSpace+1);
-	
-		Serial.print("Part1: \t"); 									//TESTING
-		Serial.print(part1);															//TESTING
-		Serial.print("\tPart2: \t");											//TESTING
+	/*
+		Serial.print("Part1: \t"); 												//TESTING
+		Serial.println(part1);														//TESTING
+		Serial.print("Part2: \t");													//TESTING
 		Serial.println(part2);														//TESTING
-		Serial.print("\tPart3: \t");												//TESTING
+		Serial.print("Part3: \t");													//TESTING
 		Serial.println(part3);														//TESTING
-		//convert to char array to ELABORATE!
-		char part[10];
+	*/
+		char part[10];					//convert to char array to elaborate command.
 		part1.toCharArray(part,10);
-
-	//if (part1.equalsIgnoreCase("START"))			//START command
-	if (strstr(part,"START"))	 //NEW COMPARISON METHOD
+		num2 = part2.toInt();
+		num3 = part3.toInt();
+	/*
+		Serial.print("Num2: \t");													//TESTING
+		Serial.println(num2);														//TESTING
+		Serial.print("Num3: \t");													//TESTING
+		Serial.println(num3);														//TESTING
+	*/	
+	if (strcasestr(part,"START"))		//START command
 	{
-		int mins_run = part2.toInt();
-		digitalWrite(pump1Pin, HIGH);
-		digitalWrite(pump1LedPin, HIGH);
-		//pumpIsActive = 1;
-		//DoWatering(mins_run);
+		if (num2 > 0)
+		{
+			Serial.print("Minutes SET to:");										//TESTING
+			Serial.println(num2);													//TESTING
+		}
+		pumpIsActive = 1;
 	}
-	else if (part1.equalsIgnoreCase("STOP"))		//STOP command
+	else if (strcasestr(part,"STOP"))		//STOP command
 	{
-		digitalWrite(pump1Pin, LOW);
-		digitalWrite(pump1LedPin, LOW);
-		Serial.println("STOP RECEIVED");											//TESTING
-		//int mins_to_stop = part2.toInt();
+		
+	//	Serial.println("STOP RECEIVED");		//TESTING
+		pumpIsActive = 0;
+		
 	}
 	
 	
 }
 
-//Start watering function lasting specified minutes
+//Starts watering function lasting specified minutes
 void DoWatering(int minutes)
 {
 	unsigned long milliseconds = (minutes * 60000);
