@@ -2,6 +2,12 @@
 ### Arduino Watering System ###
 This is a simple controller to allow programmable watering of plants
 
+Commands available over serial/bluetooth (case-insensitive):
+	# START		Enables the pump
+	# STOP		Disables the pump
+	# OVRON		Prevents the pump from starting
+	# OVROFF		Re-enables pump
+
 */
 
 //libraries to include
@@ -52,7 +58,7 @@ Serialdb.println("Debug Mode ON");
 
 void loop()
 {
-	
+																		// Main Pump Control part
 	if (pumpIsActive & !pumpOvrStop){
 		digitalWrite(pump1Pin, HIGH);
 		digitalWrite(pump1LedPin, HIGH);
@@ -62,16 +68,13 @@ void loop()
 		digitalWrite(pump1LedPin, LOW);
 	}
 	
-	
-	
-
-	
+																		// Serial data collection
 	if (Serial.available())
 	{
 		char c = Serial.read();
 		if (c == '\n')
 		{
-			parseCommand(inBuffer);
+			parseCommand(inBuffer); 							// Call function to parse serial commands
 			inBuffer = "";
 		}
 		else
@@ -83,7 +86,7 @@ void loop()
 	
 }
 
-void parseCommand(String com)
+void parseCommand(String com)									// Function to parse serial commands
 {
 	String part1,part2,part3;
 	int nextSpace, lastSpace;
@@ -104,16 +107,17 @@ void parseCommand(String com)
 	*/
 		char part[10];					//convert to char array to elaborate command.
 		part1.toCharArray(part,10);
+		
+	if (strcasestr(part,"START"))		//START command
+	{
 		num2 = part2.toInt();
-		num3 = part3.toInt();
+		//num3 = part3.toInt();    	//part3 not used yet
 	/*
 		Serial.print("Num2: \t");													//TESTING
 		Serial.println(num2);														//TESTING
 		Serial.print("Num3: \t");													//TESTING
 		Serial.println(num3);														//TESTING
-	*/	
-	if (strcasestr(part,"START"))		//START command
-	{
+	*/
 		if (num2 > 0)
 		{
 			Serial.print("Minutes SET to:");										//TESTING
@@ -123,13 +127,19 @@ void parseCommand(String com)
 	}
 	else if (strcasestr(part,"STOP"))		//STOP command
 	{
-		
 	//	Serial.println("STOP RECEIVED");		//TESTING
 		pumpIsActive = 0;
-		
 	}
-	
-	
+	else if (strcasestr(part,"OVRON"))		//OVRSTOPON command
+	{
+	//	Serial.println("OVRON RECEIVED");		//TESTING
+		pumpOvrStop = 1;
+	}
+	else if (strcasestr(part,"OVROFF"))		//OVRSTOPOFF command
+	{
+	//	Serial.println("OVROFF RECEIVED");		//TESTING
+		pumpOvrStop = 0;
+	}
 }
 
 //Starts watering function lasting specified minutes
