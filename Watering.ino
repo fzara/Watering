@@ -6,8 +6,7 @@ Commands available over serial/bluetooth (case-sensitive):
 	# LEDTEST 	Makes the led blink 5 times (testing purposes)
 	# START		Enables the pump
 	# STOP		Disables the pump
-	# OVRON		Prevents the pump from starting
-	# OVROFF		Re-enables pump
+	# OVR 1/0	Enables/Disables Pump Override Stop
 
 */
 
