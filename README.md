@@ -8,11 +8,12 @@ The sketch receives commands via the serial interface.
 
 | Command   | Action         |
 | ----------| ----------- |
-| LEDTEST   | Makes the led blink 5 times (testing)|
-| PUMPTEST  | Activates the pump for 2 seconds (testing)|  
-| START     | Enables the pump    |
-| STOP      | Disables the pump    |
-| OVR 1/0   | Enables/Disables Pump Override Stop   |
+| LEDTEST   | Makes the led blink 5 times (testing)     |
+| PUMPTEST  | Activates the pump for 2 seconds (testing)| 
+| SPEED     | Sets the pump speed via PWM (1-255)       |
+| START     | Enables the pump                          |
+| STOP      | Disables the pump                         |
+| OVR 1/0   | Enables/Disables Pump Override Stop       |
 
 
 ToDo:
