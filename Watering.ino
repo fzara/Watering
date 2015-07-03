@@ -7,7 +7,6 @@ Commands available over serial/bluetooth (case-sensitive):
 	# START		Enables the pump
 	# STOP		Disables the pump
 	# OVR 1/0	Enables/Disables Pump Override Stop
-
 */
 
 //libraries to include
@@ -56,6 +55,7 @@ Serial.begin(9800); //Serial for receiving commands, correct baud rate according
 
 // Setup callbacks for SerialCommand commands 
   SCmd.addCommand("LEDTEST",LED_test);   	// Tests the led with 5 rapid blinking
+  SCmd.addCommand("PUMPTEST",PUMP_test);  // Tests the pump, activating it for 2 seconds
   SCmd.addCommand("OVR",OvrSet);				// Enables/disables security override
   SCmd.addCommand("START",StartWatering);	// Starts watering for a given time, or indefinitely
   SCmd.addCommand("STOP",StopWatering);	// Stops watering
@@ -107,10 +107,17 @@ void LED_test()
   for (byte i=0; i<5; i++)
   {
 	  digitalWrite(pump1LedPin, HIGH);
-	  delay(100);
+	  delay(200);
 	  digitalWrite(pump1LedPin, LOW);
-	  delay(100);
+	  delay(200);
   }
+}
+
+void PUMP_test()
+{
+	  analogWrite(pump1Pin,255);
+	  delay(2000);
+	  analogWrite(pump1Pin,0);
 }
 
 void OvrSet()
@@ -124,7 +131,6 @@ void OvrSet()
 		if (setting == 1)
 		{
 			pumpOvrStop = 1;
-			Serial.println("OVR = 1");
 		}
 		else if (setting == 0)
 		{
@@ -142,8 +148,8 @@ void StartWatering()
 		minsToWater = atoi(arg);
 		minsWatering = 1;
 		prevMillis = millis();
-		Serial.print("minsWatering = true, Minutes to water: ");
-		Serial.println(minsToWater);
+		//Serial.print("minsWatering = true, Minutes to water: ");
+		//Serial.println(minsToWater);
 	}
 	else 
 	{
