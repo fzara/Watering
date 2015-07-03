@@ -6,8 +6,8 @@ The sketch receives commands via the serial interface.
 
 ####Commands available over serial/bluetooth (case-sensitive):####
 
-| Name | Description          |
-| ------------- | ----------- |
+| Command   | Action         |
+| ----------| ----------- |
 | LEDTEST   | Makes the led blink 5 times (testing)|
 | PUMPTEST  | Activates the pump for 2 seconds (testing)|  
 | START     | Enables the pump    |
