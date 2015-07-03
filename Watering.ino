@@ -4,6 +4,8 @@ This is a simple controller to allow programmable watering of plants
 
 Commands available over serial/bluetooth (case-sensitive):
 	# LEDTEST 	Makes the led blink 5 times (testing purposes)
+	# PUMPTEST	Activates the pump for 2 seconds
+	# SPEED X	Sets the pump speed to x (1-255)
 	# START		Enables the pump
 	# STOP		Disables the pump
 	# OVR 1/0	Enables/Disables Pump Override Stop
@@ -56,6 +58,7 @@ Serial.begin(9800); //Serial for receiving commands, correct baud rate according
 // Setup callbacks for SerialCommand commands 
   SCmd.addCommand("LEDTEST",LED_test);   	// Tests the led with 5 rapid blinking
   SCmd.addCommand("PUMPTEST",PUMP_test);  // Tests the pump, activating it for 2 seconds
+  SCmd.addCommand("SPEED",SetPumpSpeed);	// Sets the pump speed (1-255)
   SCmd.addCommand("OVR",OvrSet);				// Enables/disables security override
   SCmd.addCommand("START",StartWatering);	// Starts watering for a given time, or indefinitely
   SCmd.addCommand("STOP",StopWatering);	// Stops watering
@@ -163,6 +166,22 @@ void StopWatering()
 	pumpIsActive = 0;
 	minsWatering = 0;
 }
+
+void SetPumpSpeed()
+{
+	char *arg;
+	arg = SCmd.next();
+	if (arg != NULL)
+	{
+		pump1Speed = atoi(arg);
+		
+	}
+	else 
+	{
+		pump1Speed = 255;
+	}
+}
+
 void unrecognized()
 {
   Serial.println("INVALIDCOMMAND"); 
