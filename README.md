@@ -13,3 +13,9 @@ The sketch receives commands via the serial interface.
 | START     | Enables the pump    |
 | STOP      | Disables the pump    |
 | OVR 1/0   | Enables/Disables Pump Override Stop   |
+
+
+ToDo:
+* Add RTC 
+* Allow programming of RTC via Bluetooth
+* Add controls via TCP/IP. (I have no idea how to do it!)
