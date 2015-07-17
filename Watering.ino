@@ -8,8 +8,14 @@ Commands available over serial/bluetooth (case-sensitive):
 	# SPEED X	Sets the pump speed to x (1-255)
 	# START		Enables the pump
 	# STOP		Disables the pump
+	# SETTIMER1	XX YY	Sets timer 1 to hour XX and minutes YY
+	# TIMER1 1/0	Enables/Disables timer1 watering
+	# TIMER2 1/0	Enables/Disables timer2 watering
 	# OVR 1/0	Enables/Disables Pump Override Stop
 */
+
+#define MAX_TIMERS_NUMBER 1
+
 
 //libraries to include
 #include <SerialCommand.h>
@@ -41,6 +47,12 @@ unsigned long prevMillis;
 //SerialCommand object
 SerialCommand SCmd;
 
+struct WaterTimer {
+int hour;
+int minute;
+} WateringTimer[MAX_TIMERS_NUMBER];
+
+
 void setup()
 {
  //pinMode declaration
@@ -62,6 +74,7 @@ Serial.begin(9800); //Serial for receiving commands, correct baud rate according
   SCmd.addCommand("OVR",OvrSet);				// Enables/disables security override
   SCmd.addCommand("START",StartWatering);	// Starts watering for a given time, or indefinitely
   SCmd.addCommand("STOP",StopWatering);	// Stops watering
+  SCmd.addCommand("SETTIMER",SetTimer);	// Sets timer 1
   SCmd.addDefaultHandler(unrecognized);  	// Handler for command that isn't matched  (says "INVALIDCOMMAND") 
   Serial.println("READY"); 
 
@@ -121,6 +134,32 @@ void PUMP_test()
 	  analogWrite(pump1Pin,255);
 	  delay(2000);
 	  analogWrite(pump1Pin,0);
+}
+
+void SetTimer(){
+	char *arg;
+	int TimerNum;
+	arg = SCmd.next();
+	if (arg)
+		{
+		TimerNum = atoi(arg);
+		char *arg1, *arg2;
+		int TimerHour,TimerMinute;
+		arg1 = SCmd.next();
+		arg2 = SCmd.next();
+		if (arg1 && arg2)
+			{
+			TimerHour = atoi(arg1);
+			TimerMinute = atoi(arg2);
+			WateringTimer[TimerNum].hour = TimerHour;
+			WateringTimer[TimerNum].minute = TimerMinute;
+			Serial.print("Setting timer to:");
+			Serial.print("H:");
+			Serial.print(WateringTimer[TimerNum].hour);
+			Serial.print("M:");
+			Serial.println(WateringTimer[TimerNum].minute);
+			}
+		}
 }
 
 void OvrSet()
