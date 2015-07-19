@@ -6,14 +6,18 @@ The sketch receives commands via the serial interface.
 
 ####Commands available over serial/bluetooth (case-sensitive):####
 
-| Command   | Action         |
-| ----------| ----------- |
-| LEDTEST   | Makes the led blink 5 times (testing)     |
-| PUMPTEST  | Activates the pump for 2 seconds (testing)| 
-| SPEED     | Sets the pump speed via PWM (1-255)       |
-| START     | Enables the pump                          |
-| STOP      | Disables the pump                         |
-| OVR 1/0   | Enables/Disables Pump Override Stop       |
+*Italic commands are still in testing*
+
+| Command   		| Action         |
+| ---------------	| ----------- |
+| LEDTEST   		| Makes the led blink 5 times (testing)     																|
+| PUMPTEST  		| Activates the pump for 2 seconds (testing)																| 
+| SPEED     		| Sets the pump speed via PWM (1-255)       																|
+| START     		| Enables the pump                          																|
+| STOP      		| Disables the pump                        														 		|
+| OVR 1/0   		| Enables/Disables Pump Override Stop       																|
+| *TIMER N H M D*	| *Sets the Timer n° N to hour H and minute M for a duration D (expressed in minutes)* 	|
+| *TIMER N 1/0*	| *Activates/Deactivates timer n° N*																		|
 
 
 ToDo:

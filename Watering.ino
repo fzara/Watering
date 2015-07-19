@@ -3,15 +3,14 @@
 This is a simple controller to allow programmable watering of plants
 
 Commands available over serial/bluetooth (case-sensitive):
-	# LEDTEST 	Makes the led blink 5 times (testing purposes)
-	# PUMPTEST	Activates the pump for 2 seconds
-	# SPEED X	Sets the pump speed to x (1-255)
-	# START		Enables the pump
-	# STOP		Disables the pump
-	# SETTIMER1	XX YY	Sets timer 1 to hour XX and minutes YY
-	# TIMER1 1/0	Enables/Disables timer1 watering
-	# TIMER2 1/0	Enables/Disables timer2 watering
-	# OVR 1/0	Enables/Disables Pump Override Stop
+	# LEDTEST 				Makes the led blink 5 times (testing purposes)
+	# PUMPTEST				Activates the pump for 2 seconds
+	# SPEED X				Sets the pump speed to x (1-255)
+	# START					Enables the pump
+	# STOP					Disables the pump
+	# SETTIMER N X Y D 	Sets timer N to hour X and minutes Y for a duration of D (in minutes)
+	# TIMER N 1/0			Enables/Disables timer N watering
+	# OVR 1/0				Enables/Disables Pump Override Stop
 */
 
 #define MAX_TIMERS_NUMBER 1
@@ -50,6 +49,7 @@ SerialCommand SCmd;
 struct WaterTimer {
 int hour;
 int minute;
+int period;
 } WateringTimer[MAX_TIMERS_NUMBER];
 
 
@@ -136,6 +136,7 @@ void PUMP_test()
 	  analogWrite(pump1Pin,0);
 }
 
+// TODO: Add Duration setting
 void SetTimer(){
 	char *arg;
 	int TimerNum;
@@ -159,6 +160,15 @@ void SetTimer(){
 			Serial.print("M:");
 			Serial.println(WateringTimer[TimerNum].minute);
 			}
+		char *arg3;
+		int TimerPeriod;
+		arg3 = SCmd.next();
+		if (arg3)
+			{
+			TimerPeriod = atoi(arg3);
+			}
+		else TimerPeriod = 1;
+		WateringTimer[TimerNum].period = TimerPeriod;
 		}
 }
 
