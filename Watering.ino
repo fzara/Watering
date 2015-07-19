@@ -13,7 +13,7 @@ Commands available over serial/bluetooth (case-sensitive):
 	# OVR 1/0				Enables/Disables Pump Override Stop
 */
 
-#define MAX_TIMERS_NUMBER 1
+#define MAX_TIMERS_NUMBER 2
 
 
 //libraries to include
@@ -33,9 +33,9 @@ const byte pump1Pin = 2; //Has to be a PWM capable pin
 const byte pump1LedPin = 13;
 
 // Var Declarations
-int minsToWater,pump1Speed;
-bool pumpIsActive, pumpOvrStop, minsWatering = 0;
-unsigned long prevMillis;
+int minsToWater,minsToTimedWater,pump1Speed;
+bool pumpIsActive, pumpOvrStop, minsWatering, TimedWatering = 0;
+unsigned long prevMillis, prevMillisTimedWatering;
 
 
 //#ifdef DEBUG_MODE
@@ -50,6 +50,7 @@ struct WaterTimer {
 int hour;
 int minute;
 int period;
+bool set;
 } WateringTimer[MAX_TIMERS_NUMBER];
 
 
@@ -113,9 +114,26 @@ void loop()
 		{
 			pumpIsActive = 1;
 		}
-		else pumpIsActive = 0;
+		else 
+		{
+			pumpIsActive = 0;
+			Serial.print("minsWatering time elapsed");				//REMOVE
+		}
 	}
 	
+	if (TimedWatering)
+	{
+		if (millis() < (prevMillisTimedWatering + (minsToTimedWater)*60000))
+		{
+			pumpIsActive = 1;
+		}
+		else 
+		{
+			pumpIsActive = 0;
+			// Unsure.... minsWatering = 0;
+			Serial.print("minsToTimedWater time elapsed");				//REMOVE
+		}
+	}
 }
 
 void LED_test()
@@ -143,6 +161,7 @@ void SetTimer(){
 	arg = SCmd.next();
 	if (arg)
 		{
+		Serial.println("Received timer arg"); 				// REMOVE
 		TimerNum = atoi(arg);
 		char *arg1, *arg2;
 		int TimerHour,TimerMinute;
@@ -150,6 +169,7 @@ void SetTimer(){
 		arg2 = SCmd.next();
 		if (arg1 && arg2)
 			{
+			Serial.println("Received timer arg1 & arg2"); // REMOVE
 			TimerHour = atoi(arg1);
 			TimerMinute = atoi(arg2);
 			WateringTimer[TimerNum].hour = TimerHour;
@@ -165,10 +185,23 @@ void SetTimer(){
 		arg3 = SCmd.next();
 		if (arg3)
 			{
+			Serial.println("Received timer arg3");			// REMOVE
 			TimerPeriod = atoi(arg3);
 			}
-		else TimerPeriod = 1;
+		else 
+			{
+			TimerPeriod = 1;
+			Serial.println("Did not receive arg3"); 		// REMOVE
+			}
 		WateringTimer[TimerNum].period = TimerPeriod;
+		Serial.print("Setting timer to:");					// REMOVE	
+		Serial.print("H:");										// REMOVE
+		Serial.print(WateringTimer[TimerNum].hour);		// REMOVE
+		Serial.print("M:");										// REMOVE
+		Serial.print(WateringTimer[TimerNum].minute);	// REMOVE
+		Serial.print("For a duration of: ");				// REMOVE
+		Serial.print(WateringTimer[TimerNum].period);	// REMOVE
+		Serial.println(" minutes.");							// REMOVE
 		}
 }
 
@@ -188,6 +221,24 @@ void OvrSet()
 		{
 			pumpOvrStop = 0;
 		}
+	}
+}
+
+//TODO Complete function
+void StartTimedWatering()
+{
+	//Add code to obtain now() from RTC
+	for (int i=0; i <= MAX_TIMERS_NUMBER; i++)
+	{
+		//if (WateringTimer[i].hour == now.hour && WateringTimer[i].minute == now.minute && WateringTimer[i].set && !minsWatering)
+		// Create function Timer() to enable timer. Or insert the part in SetTimer()
+		{
+			minsWatering = 0;
+			minsToTimedWater = WateringTimer[i].period;
+			TimedWatering = 1;
+			prevMillisTimedWatering = millis();
+		}
+		//else TimedWatering = 0;
 	}
 }
 
